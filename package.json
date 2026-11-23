@@ -1,0 +1,13 @@
+{
+  "name": "expedition-htn-runtime",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "vendor": "node scripts/vendor.mjs",
+    "serve": "node scripts/serve.mjs",
+    "cli": "node cli/run.mjs",
+    "test": "node cli/selftest.mjs"
+  },
+  "dependencies": {}
+}

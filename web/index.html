@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>虚拟考察队 · 层级任务运行时</title>
+<link rel="stylesheet" href="styles.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three.module.js",
+    "three/addons/": "./vendor/"
+  }
+}
+</script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">虚拟考察队 · 层级任务运行时（HTN 分解搜索 + 世界条件确认）</div>
+  <div class="controls">
+    <label>场景
+      <select id="scenarioSelect"></select>
+    </label>
+    <label>退出恢复策略
+      <select id="recoveryMode">
+        <option value="substitute">局部换人（破坏能力则回退）</option>
+        <option value="rollback">回溯祖先方法重新分工</option>
+      </select>
+    </label>
+    <button id="btnPlan" class="primary">重新分解</button>
+    <button id="btnStep">单步推进</button>
+    <button id="btnAuto">自动推进</button>
+    <button id="btnReset">重置</button>
+  </div>
+</header>
+
+<div id="banner" class="banner" style="display:none"></div>
+
+<main class="layout">
+  <aside class="panel left">
+    <section>
+      <h3>任务条件（可更改）</h3>
+      <div id="conditions" class="conditions"></div>
+      <div class="inject">
+        <button id="btnWithdraw">令首名在岗队员退出</button>
+        <button id="btnBreakDrone">注入航测仪故障</button>
+        <button id="btnDeliverBattery">补送电源箱</button>
+        <button id="btnReplan">按当前状态重新分解</button>
+      </div>
+      <p class="hint">队员在 travel / carry 途中退出才触发“途中退出”恢复；恢复策略在顶部切换。</p>
+    </section>
+    <section>
+      <h3>方法适用性核对（分解依据）</h3>
+      <div id="trace" class="trace"></div>
+    </section>
+  </aside>
+
+  <section class="panel center">
+    <h3>三维考察现场（可旋转 / 缩放）</h3>
+    <div id="view" class="view"></div>
+  </section>
+
+  <aside class="panel right">
+    <section>
+      <h3>任务分解树（展开查看任务来源）</h3>
+      <div id="tree" class="tree"></div>
+    </section>
+    <section>
+      <h3>结果区：世界完成条件</h3>
+      <div id="results" class="results"></div>
+    </section>
+    <section class="events-section">
+      <h3>执行与异常事件</h3>
+      <div id="events" class="events"></div>
+    </section>
+  </aside>
+</main>
+
+<script type="module" src="./app.mjs"></script>
+</body>
+</html>
