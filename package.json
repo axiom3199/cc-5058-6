@@ -7,7 +7,11 @@
     "vendor": "node scripts/vendor.mjs",
     "serve": "node scripts/serve.mjs",
     "cli": "node cli/run.mjs",
-    "test": "node cli/selftest.mjs"
+    "test": "node cli/selftest.mjs && node scripts/dom-check.mjs && node bench/test-opt.mjs",
+    "test:opt": "node bench/test-opt.mjs",
+    "bench": "node bench/run.mjs",
+    "bench:check": "node bench/run.mjs --check",
+    "bench:save": "node bench/run.mjs --save"
   },
   "dependencies": {}
 }

@@ -49,6 +49,10 @@ section + section { margin-top: 18px; }
 .inject button { padding: 7px 6px; }
 .hint { font-size: 12px; color: var(--muted); }
 
+.opt-stats .stats-row { display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 6px; }
+.opt-stats .chip b { color: #9ff0c8; }
+.opt-stats.muted { font-size: 12px; }
+
 .trace-block { background: var(--panel2); border: 1px solid var(--line); border-radius: 9px;
   padding: 8px; margin-bottom: 8px; }
 .trace-title { font-weight: 700; margin-bottom: 6px; }

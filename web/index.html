@@ -27,6 +27,13 @@
         <option value="rollback">回溯祖先方法重新分工</option>
       </select>
     </label>
+    <label>分解搜索优化
+      <select id="cacheMode">
+        <option value="proof">带证明复用（proof）</option>
+        <option value="nogood">仅失败前提缓存（nogood）</option>
+        <option value="off">不缓存完整展开（off 对照）</option>
+      </select>
+    </label>
     <button id="btnPlan" class="primary">重新分解</button>
     <button id="btnStep">单步推进</button>
     <button id="btnAuto">自动推进</button>
@@ -52,6 +59,10 @@
     <section>
       <h3>方法适用性核对（分解依据）</h3>
       <div id="trace" class="trace"></div>
+    </section>
+    <section>
+      <h3>分解搜索优化指标</h3>
+      <div id="optStats" class="opt-stats muted">尚未分解</div>
     </section>
   </aside>
 

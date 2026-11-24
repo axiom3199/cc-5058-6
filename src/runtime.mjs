@@ -7,7 +7,7 @@
 
 import { ACTIONS, renderLabel } from './actions.mjs';
 import { METHODS } from './methods.mjs';
-import { plan } from './planner.mjs';
+import { plan, Memo } from './planner.mjs';
 
 const READY = 'ready', RUNNING = 'running', DONE = 'done',
   FAILED = 'failed', SKIPPED = 'skipped', BLOCKED = 'blocked';
@@ -17,6 +17,8 @@ export class Runtime {
     this.state = state;
     this.roots = planResult.roots;
     this.recovery = opts.recovery ?? 'substitute'; // substitute | rollback
+    this.planMode = opts.mode ?? planResult.mode ?? 'proof';
+    this.memo = opts.memo ?? planResult.memo ?? null; // 共享缓存：重分解可复用仍有效的证明
     this.events = [];
     this.finished = false;
     this.index = new Map();      // leaf.uid -> leaf runtime record
@@ -217,7 +219,9 @@ export class Runtime {
     const requests = this.roots
       .filter((r) => r.uid === rootUid)
       .map((r) => ({ id: r.requestId, task: r.task, ctx: r.ctx }));
-    const result = plan(this.state, requests);
+    // 世界已变化（队员退出）：显式失效旧缓存，再按当前世界状态重新分解
+    this.memo?.invalidate('ancestor-rollback');
+    const result = plan(this.state, requests, { mode: this.planMode, memo: this.memo ?? undefined });
     if (!result.ok) {
       this._failCompound(root, `祖先回退后仍无可行方案：${result.reason}`);
       return;
@@ -284,6 +288,8 @@ export class Runtime {
       if (leaf.status !== READY) continue;
       this._tryStart(leaf);
     }
+    // 动作 finish() 改变了世界：推进世界版本，使带证明缓存按新事实失效/重核
+    this.state.touch();
     this._evaluateCompounds();
     this.finished = this.roots.every((r) => this._compoundClosed(r));
     if (this.finished) this.emit('finished', '所有高层任务结束（完成状态由世界条件确认）');

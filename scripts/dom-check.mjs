@@ -6,6 +6,13 @@ class El {
   constructor(tag = 'div') {
     this.tagName = tag; this.children = []; this.style = {};
     this.listeners = {}; this.className = ''; this.value = ''; this._html = '';
+    this.classList = {
+      _set: new Set(),
+      add(c) { this._set.add(c); },
+      remove(c) { this._set.delete(c); },
+      contains(c) { return this._set.has(c); },
+      toggle(c) { this._set.has(c) ? this._set.delete(c) : this._set.add(c); },
+    };
   }
   appendChild(c) { c.parentNode = this; this.children.push(c); return c; }
   prepend(c) { c.parentNode = this; this.children.unshift(c); }
@@ -31,11 +38,14 @@ class El {
   get selectedOptions() { return [{ textContent: '' }]; }
 }
 
-const ids = ['view', 'scenarioSelect', 'recoveryMode', 'btnPlan', 'btnStep', 'btnAuto',
+const ids = ['view', 'scenarioSelect', 'recoveryMode', 'cacheMode', 'btnPlan', 'btnStep', 'btnAuto',
   'btnReset', 'btnWithdraw', 'btnBreakDrone', 'btnDeliverBattery', 'btnReplan',
-  'banner', 'conditions', 'trace', 'tree', 'results', 'events'];
+  'banner', 'conditions', 'trace', 'tree', 'results', 'events', 'optStats'];
 const els = Object.fromEntries(ids.map((id) => [id, new El()]));
 els.view.clientWidth = 800; els.view.clientHeight = 600;
+// 桩不解析静态 HTML 的 <option>，手动给出与 index.html 首项一致的默认值
+els.cacheMode.value = 'proof';
+els.recoveryMode.value = 'substitute';
 
 global.document = {
   querySelector: (s) => els[s.slice(1)] ?? new El(),
@@ -146,6 +156,21 @@ for (let i = 0; i < 4; i++) els.btnStep.click();
 els.btnBreakDrone.click();
 expect('S5 故障横幅提示', els.banner.textContent.includes('航测仪'));
 expect('S5 出现失败/阻止事件', eventText().includes('leaf-failed') || eventText().includes('blocked'));
+
+// 分解搜索优化控件：切换模式后重新分解，指标区由内核真实统计驱动
+expect('优化指标区渲染完整展开数', els.optStats.innerHTML.includes('完整展开'));
+els.cacheMode.value = 'off'; els.cacheMode.change();
+expect('切换 off 模式后仍产生分解树', els.tree.innerHTML.includes('node'));
+expect('off 模式指标显示当前模式', els.optStats.innerHTML.includes('off'));
+els.cacheMode.value = 'nogood'; els.cacheMode.change();
+expect('切换 nogood 模式后分解树正常', els.tree.innerHTML.includes('node'));
+els.cacheMode.value = 'proof'; els.cacheMode.change();
+els.btnPlan.click();
+expect('proof 模式指标含命中/展开计数', /证明命中|完整展开/.test(els.optStats.innerHTML));
+// 条件更改后重新分解：世界事实变化驱动缓存失效/重核，界面不伪报
+els.btnDeliverBattery.click();
+els.btnReplan.click();
+expect('条件更改后重新分解成功', els.tree.innerHTML.includes('node'));
 
 let fail = 0;
 for (const [n, ok] of checks) {

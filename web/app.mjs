@@ -1,7 +1,7 @@
 // 考察任务图形界面控制器：所有任务分解与执行均调用 src 下的真实引擎运算，
 // 界面只负责推进、展示与异常提示。
 import { SCENARIOS, SCENARIO_IDS } from '../src/scenarios.mjs';
-import { plan } from '../src/planner.mjs';
+import { plan, Memo } from '../src/planner.mjs';
 import { Runtime } from '../src/runtime.mjs';
 import { Scene3D } from './scene3d.mjs';
 
@@ -40,6 +40,19 @@ export class App {
     $('#recoveryMode').addEventListener('change', () => {
       if (this.rt) this.rt.recovery = $('#recoveryMode').value;
     });
+    $('#cacheMode').addEventListener('change', () => {
+      this.memo = null; // 切换优化模式：弃用旧缓存，按新模式重建
+      this.loadScenario(this.scenarioId);
+    });
+  }
+
+  cacheMode() { return $('#cacheMode').value; }
+
+  // 统一分解入口：界面控件经这里驱动真实内核，模式与共享 memo 一并传入
+  runPlan() {
+    const mode = this.cacheMode();
+    this.memo = this.memo ?? new Memo(mode);
+    return plan(this.state, this.requests, { mode, memo: this.memo });
   }
 
   loadScenario(id) {
@@ -49,15 +62,19 @@ export class App {
     this.scenarioId = id;
     this.state = sc.build();
     this.requests = sc.tasks.map((t) => ({ ...t }));
-    const planned = plan(this.state, this.requests);
+    this.memo = null;
+    const planned = this.runPlan();
     this.planTrace = planned.trace;
+    this.lastStats = planned.stats;
+    this.lastLedger = planned.ledger;
     if (!planned.ok) {
       this.showBanner('error', `分解失败：${planned.reason}`);
       this.rt = null;
       this.renderAll();
       return;
     }
-    this.rt = new Runtime(this.state, planned, { recovery: $('#recoveryMode').value });
+    this.rt = new Runtime(this.state, planned,
+      { recovery: $('#recoveryMode').value, mode: this.cacheMode(), memo: this.memo });
     this.hideBanner();
     this.init3d();
     this.renderAll();
@@ -158,9 +175,12 @@ export class App {
   }
 
   replanCurrent() {
-    const planned = plan(this.state, this.requests);
+    const planned = this.runPlan();
+    this.lastStats = planned.stats;
+    this.lastLedger = planned.ledger;
     if (!planned.ok) return this.showBanner('error', `重新分解失败：${planned.reason}`);
-    this.rt = new Runtime(this.state, planned, { recovery: $('#recoveryMode').value });
+    this.rt = new Runtime(this.state, planned,
+      { recovery: $('#recoveryMode').value, mode: this.cacheMode(), memo: this.memo });
     this.planTrace = planned.trace;
     this.showBanner('ok', '已按当前世界状态重新分解搜索');
     this.renderAll();
@@ -172,6 +192,30 @@ export class App {
     this.renderTree();
     this.renderTrace();
     this.renderResults();
+    this.renderOptStats();
+  }
+
+  renderOptStats() {
+    const el = $('#optStats');
+    if (!this.lastStats) { el.innerHTML = '<span class="muted">尚未分解</span>'; return; }
+    const s = this.lastStats;
+    const ledger = (this.lastLedger ?? [])
+      .map((o) => `<span class="chip">${o.key} ${o.used}/${o.total}</span>`).join('');
+    el.classList.remove('muted');
+    el.innerHTML = `
+      <div class="stats-row">
+        <span class="chip">模式 ${this.cacheMode()}</span>
+        <span class="chip">完整展开 <b>${s.expansions}</b></span>
+        <span class="chip">证明命中 <b>${s.proofHits}</b></span>
+        <span class="chip">证明拒绝 <b>${s.proofRejected}</b></span>
+        <span class="chip">失败前提命中 <b>${s.nogoodHits}</b></span>
+      </div>
+      <div class="stats-row">
+        <span class="chip">撤回 <b>${s.rollbacks}</b></span>
+        <span class="chip">换人 <b>${s.swaps}</b></span>
+        <span class="chip">世界失效 <b>${s.invalidations}</b></span>
+      </div>
+      <div class="stats-row"><b>预订台账：</b>${ledger || '<span class="muted">无席位/器材预订</span>'}</div>`;
   }
 
   renderConditions() {

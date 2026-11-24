@@ -1,0 +1,225 @@
+{
+  "structural": {
+    "seatConflict": {
+      "expansions": {
+        "off": 2,
+        "proof": 2,
+        "nogood": 2
+      },
+      "executable": {
+        "off": false,
+        "proof": false,
+        "nogood": false
+      },
+      "missed": {
+        "off": {
+          "inOracle": true,
+          "oracleSize": 1
+        },
+        "proof": {
+          "inOracle": true,
+          "oracleSize": 1
+        },
+        "nogood": {
+          "inOracle": true,
+          "oracleSize": 1
+        }
+      },
+      "reuse": {
+        "firstExpansions": 2,
+        "secondExpansions": 2,
+        "proofHits": 1,
+        "nogoodHits": 1,
+        "samePlan": true
+      },
+      "change": null,
+      "nogoodTtl": null
+    },
+    "deviceSwap": {
+      "expansions": {
+        "off": 1,
+        "proof": 1,
+        "nogood": 1
+      },
+      "executable": {
+        "off": true,
+        "proof": true,
+        "nogood": true
+      },
+      "missed": {
+        "off": {
+          "inOracle": true,
+          "oracleSize": 1
+        },
+        "proof": {
+          "inOracle": true,
+          "oracleSize": 1
+        },
+        "nogood": {
+          "inOracle": true,
+          "oracleSize": 1
+        }
+      },
+      "reuse": {
+        "firstExpansions": 1,
+        "secondExpansions": 1,
+        "proofHits": 1,
+        "nogoodHits": 0,
+        "samePlan": true
+      },
+      "change": {
+        "beforeRevision": 6,
+        "afterRevision": 7,
+        "rejected": 0
+      },
+      "nogoodTtl": null
+    },
+    "worldChange": {
+      "expansions": {
+        "off": 1,
+        "proof": 1,
+        "nogood": 1
+      },
+      "executable": {
+        "off": true,
+        "proof": true,
+        "nogood": true
+      },
+      "missed": {
+        "off": {
+          "inOracle": true,
+          "oracleSize": 1
+        },
+        "proof": {
+          "inOracle": true,
+          "oracleSize": 1
+        },
+        "nogood": {
+          "inOracle": true,
+          "oracleSize": 1
+        }
+      },
+      "reuse": {
+        "firstExpansions": 1,
+        "secondExpansions": 1,
+        "proofHits": 1,
+        "nogoodHits": 0,
+        "samePlan": true
+      },
+      "change": {
+        "beforeRevision": 6,
+        "afterRevision": 7,
+        "rejected": 0
+      },
+      "nogoodTtl": null
+    },
+    "nogoodTtl": {
+      "expansions": {
+        "off": 1,
+        "proof": 1,
+        "nogood": 1
+      },
+      "executable": {
+        "off": false,
+        "proof": false,
+        "nogood": false
+      },
+      "missed": {
+        "off": {
+          "inOracle": true,
+          "oracleSize": 0
+        },
+        "proof": {
+          "inOracle": true,
+          "oracleSize": 0
+        },
+        "nogood": {
+          "inOracle": true,
+          "oracleSize": 0
+        }
+      },
+      "reuse": {
+        "firstExpansions": 1,
+        "secondExpansions": 1,
+        "proofHits": 0,
+        "nogoodHits": 1,
+        "samePlan": true
+      },
+      "change": null,
+      "nogoodTtl": {
+        "hitsWithinTtl": 1,
+        "expansionsAfterTtl": 2
+      }
+    },
+    "repeatedLoad": {
+      "expansions": {
+        "off": 8,
+        "proof": 8,
+        "nogood": 8
+      },
+      "executable": {
+        "off": true,
+        "proof": true,
+        "nogood": true
+      },
+      "missed": {
+        "off": {
+          "inOracle": true,
+          "oracleSize": 1
+        },
+        "proof": {
+          "inOracle": true,
+          "oracleSize": 1
+        },
+        "nogood": {
+          "inOracle": true,
+          "oracleSize": 1
+        }
+      },
+      "reuse": {
+        "firstExpansions": 8,
+        "secondExpansions": 8,
+        "proofHits": 8,
+        "nogoodHits": 0,
+        "samePlan": true
+      },
+      "change": null,
+      "nogoodTtl": null
+    },
+    "nestedReuse": {
+      "expansions": {
+        "off": 12,
+        "proof": 12,
+        "nogood": 12
+      },
+      "executable": {
+        "off": true,
+        "proof": true,
+        "nogood": true
+      },
+      "missed": {
+        "off": {
+          "inOracle": true,
+          "oracleSize": 1
+        },
+        "proof": {
+          "inOracle": true,
+          "oracleSize": 1
+        },
+        "nogood": {
+          "inOracle": true,
+          "oracleSize": 1
+        }
+      },
+      "reuse": {
+        "firstExpansions": 12,
+        "secondExpansions": 12,
+        "proofHits": 4,
+        "nogoodHits": 0,
+        "samePlan": true
+      },
+      "change": null,
+      "nogoodTtl": null
+    }
+  }
+}
